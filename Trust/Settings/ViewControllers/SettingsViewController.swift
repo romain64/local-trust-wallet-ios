@@ -79,7 +79,7 @@ class SettingsViewController: FormViewController, Coordinator {
                 selectorController.sectionKeyForValue = { option in
                     switch option {
                     case .main, .classic, .callisto, .poa: return ""
-                    case .kovan, .ropsten, .rinkeby, .sokol: return NSLocalizedString("settings.network.test.label.title", value: "Test", comment: "")
+                    case .kovan, .ropsten, .rinkeby, .sokol, .local: return NSLocalizedString("settings.network.test.label.title", value: "Test", comment: "")
                     case .custom:
                         return NSLocalizedString("settings.network.custom.label.title", value: "Custom", comment: "")
                     }
@@ -202,22 +202,20 @@ class SettingsViewController: FormViewController, Coordinator {
                 self.helpUsCoordinator.presentSharing(in: self, from: cell.contentView)
             }
 
-//            <<< AppFormAppearance.button { button in
-//                button.title = NSLocalizedString("settings.rateUsAppStore.button.title", value: "Rate Us on App Store", comment: "")
-//            }.onCellSelection { [weak self] _, _  in
-//                self?.helpUsCoordinator.rateUs()
-//            }.cellSetup { cell, _ in
-//                cell.imageView?.image = R.image.settings_rating()
-//            }
+            <<< AppFormAppearance.button { button in
+                button.title = NSLocalizedString("settings.rateUsAppStore.button.title", value: "Rate Us on App Store", comment: "")
+            }.onCellSelection { [weak self] _, _  in
+                self?.helpUsCoordinator.rateUs()
+            }.cellSetup { cell, _ in
+                cell.imageView?.image = R.image.settings_rating()
+            }
 
             +++ Section()
 
             <<< AppFormAppearance.button { row in
                 row.cellStyle = .value1
-                row.presentationMode = .show(controllerProvider: ControllerProvider<UIViewController>.callback { [weak self] in
-                    let controller = SupportViewController()
-                    controller.delegate = self
-                    return controller
+                row.presentationMode = .show(controllerProvider: ControllerProvider<UIViewController>.callback {
+                    return SupportViewController()
                 }, onDismiss: { _ in })
             }.cellUpdate { cell, _ in
                 cell.textLabel?.textColor = .black
@@ -254,12 +252,11 @@ class SettingsViewController: FormViewController, Coordinator {
     ) -> ButtonRow {
         return AppFormAppearance.button {
             $0.title = type.title
-        }.onCellSelection { [weak self] _, _ in
-            guard let `self` = self else { return }
+        }.onCellSelection { [unowned self] _, _ in
             if let localURL = type.localURL, UIApplication.shared.canOpenURL(localURL) {
                 UIApplication.shared.open(localURL, options: [:], completionHandler: .none)
             } else {
-                self.openURLInBrowser(type.remoteURL)
+                self.openURL(type.remoteURL)
             }
         }.cellSetup { cell, _ in
             cell.imageView?.image = type.image
@@ -281,10 +278,6 @@ class SettingsViewController: FormViewController, Coordinator {
         delegate?.didAction(action: action, in: self)
     }
 
-    func openURLInBrowser(_ url: URL) {
-        self.delegate?.didAction(action: .openURL(url), in: self)
-    }
-
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -295,11 +288,5 @@ extension SettingsViewController: LockCreatePasscodeCoordinatorDelegate {
         coordinator.lockViewController.willFinishWithResult?(false)
         navigationController?.dismiss(animated: true, completion: nil)
         removeCoordinator(coordinator)
-    }
-}
-
-extension SettingsViewController: SupportViewControllerDelegate {
-    func didPressURL(_ url: URL, in controller: SupportViewController) {
-        openURLInBrowser(url)
     }
 }
