@@ -17,11 +17,12 @@ struct SettingsViewModel {
             RPCServer.main,
             RPCServer.classic,
             RPCServer.poa,
-            RPCServer.callisto,
+            //RPCServer.callisto,
             RPCServer.kovan,
             RPCServer.ropsten,
             RPCServer.rinkeby,
             RPCServer.sokol,
+            RPCServer.local,
         ]
     }
 
