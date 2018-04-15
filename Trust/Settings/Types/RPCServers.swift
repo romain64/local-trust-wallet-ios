@@ -17,6 +17,7 @@ enum RPCServer {
     case sokol
     case classic
     case callisto
+    case local
     case custom(CustomRPC)
 
     var chainID: Int {
@@ -28,7 +29,8 @@ enum RPCServer {
         case .poa: return 99
         case .sokol: return 77
         case .classic: return 61
-        case .callisto: return 820
+        case .callisto: return 104729
+        case .local: return 777
         case .custom(let custom):
             return custom.chainID
         }
@@ -44,6 +46,7 @@ enum RPCServer {
         case .sokol: return "Sokol"
         case .classic: return "Ethereum Classic"
         case .callisto: return "Callisto"
+        case .local: return "Local node"
         case .custom(let custom):
             return custom.name
         }
@@ -56,7 +59,7 @@ enum RPCServer {
     var networkType: NetworkType {
         switch self {
         case .main, .poa, .classic, .callisto: return .main
-        case .kovan, .ropsten, .rinkeby, .sokol: return .test
+        case .kovan, .ropsten, .rinkeby, .sokol, .local: return .test
         case .custom: return .custom
         }
     }
@@ -70,6 +73,7 @@ enum RPCServer {
         case .kovan: return "KETH"
         case .poa: return "POA"
         case .sokol: return "SPOA"
+        case .local: return "UML"
         case .custom(let custom):
             return custom.symbol
         }
@@ -84,19 +88,20 @@ enum RPCServer {
             switch self {
             case .main: return "https://mainnet.infura.io/llyrtzQ3YhkdESt2Fzrk"
             case .classic: return "https://web3.gastracker.io"
-            case .callisto: return "https://clo-geth.0xinfra.com"
+            case .callisto: return "https://rpc.callisto.network"
             case .kovan: return "https://kovan.infura.io/llyrtzQ3YhkdESt2Fzrk"
             case .ropsten: return "https://ropsten.infura.io/llyrtzQ3YhkdESt2Fzrk"
             case .rinkeby: return "https://rinkeby.infura.io/llyrtzQ3YhkdESt2Fzrk"
             case .poa: return "https://core.poa.network"
             case .sokol: return "https://sokol.poa.network"
+            case .local: return "http://localhost:8545"
             case .custom(let custom):
                 return custom.endpoint
             }
         }()
         return URL(string: urlString)!
     }
-
+    
     var remoteURL: URL {
         let urlString: String = {
             switch self {
@@ -108,6 +113,7 @@ enum RPCServer {
             case .rinkeby: return "https://rinkeby.trustwalletapp.com"
             case .poa: return "https://poa.trustwalletapp.com"
             case .sokol: return "https://trust-sokol.herokuapp.com"
+            case .local: return "https://ropsten.trustwalletapp.com"
             case .custom(let custom):
                 return "" // Enable? make optional
             }
@@ -126,6 +132,7 @@ enum RPCServer {
             case RPCServer.rinkeby.name: return .rinkeby
             case RPCServer.poa.name: return .poa
             case RPCServer.sokol.name: return .sokol
+            case RPCServer.local.name: return .local
             default: return .main
             }
         }()
@@ -142,6 +149,7 @@ enum RPCServer {
             case RPCServer.rinkeby.chainID: return .rinkeby
             case RPCServer.poa.chainID: return .poa
             case RPCServer.sokol.chainID: return .sokol
+            case RPCServer.local.chainID: return .local
             default: return .main
             }
         }()
