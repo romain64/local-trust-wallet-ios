@@ -16,7 +16,7 @@ Welcome to Trust's open source iOS app!
 1. Clone this repository.
 1. Run `make bootstrap` to install tools and dependencies.
 
-## Contributing
+## Using Trustwallet with a local node
 
 1. Run your local node with testRPC `node_modules/.bin/ganache-cli` and copy one of the generated private key
 1. Launch Trustwallet (iOS Simulator) and check if you communicate with the node (get_balance, get_gasfee displayed in the console)
